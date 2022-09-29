@@ -5,7 +5,8 @@ This file is the Serial Communications
 """
 
 import serial
-
+import time
+import re
 SerialDic = {}
 
 
@@ -73,9 +74,11 @@ def usb2serial_at(string):
         ser.flushInput()  # Clean Cache
         ser.write(f"{string}\r\n".encode())
         SerialReturn_1 = ser.readline()
-        SerialReturn_2 = ser.readline()
+        # print(type(SerialReturn_1))
+        # SerialReturn_2 = ser.readline()
         # SerialReturn = str(SerialReturn, encoding='gbk')
-        print(str(SerialReturn_1) + "\n" + str(SerialReturn_2))
+        # print(str(SerialReturn_1) + "\n" + str(SerialReturn_2))
+        print(str(SerialReturn_1)+"  Re:"+(re.search(r'[0-9]+\.[0-9]+', (str(SerialReturn_1))).group())+"    ", end="", flush=True)
         ser.close()
 
     except Exception as err:
@@ -85,4 +88,9 @@ def usb2serial_at(string):
 
 if __name__ == "__main__":
     usb2serial_init("COM5")
-    usb2serial_at("AT")
+    # usb2serial_at("AT+V")
+    while 1:
+        usb2serial_at("AT+V")
+        usb2serial_at("AT+C")
+        time.sleep(0.3)
+        print("\r\r",end='',flush=True)
